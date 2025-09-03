@@ -26,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
           }
 
           const q = (s: string) => '"' + String(s).replace(/["\\$`]/g, (r) => '\\' + r) + '"';
-          const cmd = `tbdflow commit --type ${q(type)} --message ${q(message)}`;
+          const cmd = `tbdflow commit --no-verify --type ${q(type)} --message ${q(message)}`;
 
           const cwd = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
             ? vscode.workspace.workspaceFolders[0].uri.fsPath
