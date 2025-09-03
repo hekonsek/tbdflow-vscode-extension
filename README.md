@@ -9,7 +9,7 @@ Simple VS Code extension that adds a "tbdflow" button to the Activity Bar (left 
 - Run the extension:
   - Press `F5` (or go to `Run and Debug` and start "Run Extension").
   - A new "Extension Development Host" window opens.
-- In the new window, click the `tbdflow` icon in the Activity Bar. You should see a small form with Type, Message, and a Commit button. Submitting shows a confirmation toast.
+- In the new window, click the `tbdflow` icon in the Activity Bar. You should see a small form with Type, Message, and a Commit button. Submitting runs `echo tbdflow commit --type <type> --message <message>` and displays the command output at the bottom of the panel.
 
 ## Optional: Package as VSIX
 

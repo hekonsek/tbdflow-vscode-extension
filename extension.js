@@ -1,6 +1,7 @@
 // Minimal VS Code extension that adds a tbdflow Activity Bar view
 // and renders a simple webview with "Hello tbdflow".
 const vscode = require('vscode');
+const cp = require('child_process');
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -15,7 +16,10 @@ function activate(context) {
       webviewView.webview.options = {
         enableScripts: true
       };
-      webviewView.webview.html = getHtml();
+      const scriptUri = webviewView.webview.asWebviewUri(
+        vscode.Uri.joinPath(context.extensionUri, 'media', 'panel.js')
+      );
+      webviewView.webview.html = getHtml(String(scriptUri));
 
       // Handle messages from the webview
       webviewView.webview.onDidReceiveMessage(async (msg) => {
@@ -28,8 +32,24 @@ function activate(context) {
             return;
           }
 
-          // Placeholder behavior: show a confirmation. Replace with real logic later.
-          vscode.window.showInformationMessage(`Commit requested: [${type}] ${message}`);
+          // Execute: echo tbdflow commit --type $type --message $message
+          // Simple quoting for POSIX shells; good enough for typical values.
+          const q = (s) => '"' + String(s).replace(/["\\$`]/g, (r) => '\\' + r) + '"';
+          const cmd = `echo tbdflow commit --type ${q(type)} --message ${q(message)}`;
+
+          // Determine a reasonable CWD (first workspace folder if any)
+          const cwd = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
+            ? vscode.workspace.workspaceFolders[0].uri.fsPath
+            : undefined;
+
+          try {
+            const { stdout, stderr } = await execCmd(cmd, { cwd });
+            webviewView.webview.postMessage({ command: 'commandOutput', stdout, stderr });
+          } catch (err) {
+            const stdout = err && err.stdout ? err.stdout : '';
+            const stderr = err && err.stderr ? err.stderr : String(err);
+            webviewView.webview.postMessage({ command: 'commandOutput', stdout, stderr });
+          }
         }
       });
     }
@@ -49,13 +69,14 @@ function activate(context) {
 
 function deactivate() {}
 
-function getHtml() {
+function getHtml(scriptUri) {
   return `<!DOCTYPE html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>tbdflow</title>
+      <!-- CSP intentionally omitted; VS Code provides a safe default for webviews. -->
       <style>
         :root { color-scheme: light dark; }
         * { box-sizing: border-box; }
@@ -87,10 +108,21 @@ function getHtml() {
         }
         button:hover { background: rgba(127,127,127,0.25); }
         .row { display: flex; flex-direction: column; gap: 4px; }
+        .output {
+          margin-top: 12px;
+          padding: 8px;
+          border-radius: 4px;
+          border: 1px solid rgba(127,127,127,0.4);
+          background: rgba(127,127,127,0.08);
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+          white-space: pre-wrap;
+          max-height: 200px;
+          overflow: auto;
+        }
       </style>
     </head>
     <body>
-      <form id="commit-form">
+      <div id="commit-form">
         <div class="row">
           <label for="type">Type</label>
           <input id="type" name="type" type="text" placeholder="feat, fix, chore..." required />
@@ -99,26 +131,27 @@ function getHtml() {
           <label for="message">Message</label>
           <input id="message" name="message" type="text" placeholder="Short description" required />
         </div>
-        <button id="commit" type="submit">Commit</button>
-      </form>
+        <button id="commit" type="button">Commit</button>
+      </div>
+      <div id="output" class="output" aria-live="polite"></div>
 
-      <script>
-        const vscode = acquireVsCodeApi();
-        const form = document.getElementById('commit-form');
-        const typeInput = document.getElementById('type');
-        const messageInput = document.getElementById('message');
-
-        form.addEventListener('submit', (e) => {
-          e.preventDefault();
-          vscode.postMessage({
-            command: 'commit',
-            type: typeInput.value,
-            message: messageInput.value
-          });
-        });
-      </script>
+      <script src="${scriptUri}"></script>
     </body>
   </html>`;
+}
+
+function execCmd(command, options = {}) {
+  return new Promise((resolve, reject) => {
+    cp.exec(command, { ...options, maxBuffer: 10 * 1024 * 1024 }, (error, stdout, stderr) => {
+      if (error) {
+        error.stdout = stdout;
+        error.stderr = stderr;
+        reject(error);
+        return;
+      }
+      resolve({ stdout, stderr });
+    });
+  });
 }
 
 module.exports = {
