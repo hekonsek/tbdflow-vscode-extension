@@ -1,12 +1,12 @@
 {
-  "name": "tbdflow-code-plugin",
+  "name": "tbdflow-vscode-extension",
   "displayName": "tbdflow",
   "description": "Adds a tbdflow Activity Bar view that shows a simple panel.",
   "version": "0.1.0",
   "publisher": "local",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hekonsek/tbdflow-code-plugin.git"
+    "url": "git+https://github.com/hekonsek/tbdflow-vscode-extension.git"
   },
   "engines": {
     "vscode": "^1.74.0"

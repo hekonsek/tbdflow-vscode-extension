@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 
 suite('Extension Basics', () => {
   test('Extension loads and activates', async () => {
-    const ext = vscode.extensions.getExtension('local.tbdflow-code-plugin');
+    const ext = vscode.extensions.getExtension('local.tbdflow-vscode-extension');
     assert.ok(ext, 'Extension should be found');
 
     await ext!.activate();
