@@ -1,7 +1,7 @@
 # tbdflow VS Code extension
 
 Simple VS Code extension for [tbdflow](https://github.com/cladam/tbdflow). Main features added by this extension are:
-- "tbdflow commit" button to the Activity Bar
+- "tbdflow commit" Activity Bar
 
 ##  Local development
 
