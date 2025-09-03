@@ -1,18 +1,27 @@
-# tbdflow Code plugin
+# tbdflow VS Code extension
 
-Simple VS Code extension that adds a "tbdflow" button to the Activity Bar (left side). Clicking it opens a sidebar panel with three single-line inputs (Type, optional Scope, and Message) and a Commit button.
+Simple VS Code extension for [tbdflow](https://github.com/cladam/tbdflow).
 
-## Install / Run from Source
+Main features added by this extension include:
+- "tbdflow commit" button to the Activity Bar
 
-- Prerequisite: Install Visual Studio Code.
-- Open this folder in VS Code.
-- Install dev dependencies and build:
-  - `npm install`
-  - `npm run compile` (or just press `F5`, which runs the watch build)
-- Run the extension:
-  - Press `F5` (or go to `Run and Debug` and start "Run Extension"). A watch build runs automatically.
-  - A new "Extension Development Host" window opens.
-- In the new window, click the `tbdflow` icon in the Activity Bar. You should see a small form with Type, optional Scope, Message, and a Commit button. Submitting runs `tbdflow commit --type <type> [--scope <scope>] --message <message>` and displays the command output at the bottom of the panel.
+##  Local development
+
+You can start local development of this extension by cloning this project and opening Code in it:
+
+```bash
+git clone git@github.com:hekonsek/tbdflow-vscode-extension.git
+cd tbdflow-vscode-extension
+code .
+```
+
+Next step is to install dev dependencies and build:
+
+```bash
+npm install
+```
+
+Finally press `F5` (or go to `Run and Debug` and start "Run Extension"). A new "Extension Development Host" window should open now. In the new window, click the `tbdflow` icon in the Activity Bar. That's it! That is your plugin running in local development mode 😊 .
 
 ## Optional: Package as VSIX
 
