@@ -2,7 +2,7 @@
   "name": "tbdflow-code-plugin",
   "displayName": "tbdflow",
   "description": "Adds a tbdflow Activity Bar view that shows a simple panel.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "publisher": "local",
   "repository": {
     "type": "git",
