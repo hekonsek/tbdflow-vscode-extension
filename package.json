@@ -4,6 +4,10 @@
   "description": "Adds a tbdflow Activity Bar view that shows a simple panel.",
   "version": "0.0.1",
   "publisher": "local",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hekonsek/tbdflow-code-plugin.git"
+  },
   "engines": {
     "vscode": "^1.74.0"
   },
