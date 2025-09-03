@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as cp from 'child_process';
+import { TbdflowCommandBuilder } from './tbdflowCommandBuilder';
 
 export function activate(context: vscode.ExtensionContext) {
   const provider: vscode.WebviewViewProvider = {
@@ -26,11 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
             return;
           }
 
-          const q = (s: string) => '"' + String(s).replace(/["\\$`]/g, (r) => '\\' + r) + '"';
-          let cmd = `tbdflow commit --no-verify --type ${q(type)} --message ${q(message)}`;
-          if (scope) {
-            cmd += ` --scope ${q(scope)}`;
-          }
+          const cmd = new TbdflowCommandBuilder().commit({ type, message, scope, noVerify: true });
 
           const cwd = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
             ? vscode.workspace.workspaceFolders[0].uri.fsPath

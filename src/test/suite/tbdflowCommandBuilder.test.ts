@@ -1,0 +1,20 @@
+import * as assert from 'assert';
+import { TbdflowCommandBuilder } from '../../tbdflowCommandBuilder';
+
+suite('TbdflowCommandBuilder', () => {
+  test('commit without scope includes no-verify', () => {
+    const cmd = new TbdflowCommandBuilder().commit({ type: 'feat', message: 'add stuff', noVerify: true });
+    assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "feat" --message "add stuff"');
+  });
+
+  test('commit with scope at the end', () => {
+    const cmd = new TbdflowCommandBuilder().commit({ type: 'feat', message: 'add', scope: 'api', noVerify: true });
+    assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "feat" --message "add" --scope "api"');
+  });
+
+  test('commit quotes special characters', () => {
+    const cmd = new TbdflowCommandBuilder().commit({ type: 'f"e', message: 'm$g', scope: 'p`th\\x', noVerify: true });
+    assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "f\\"e" --message "m\\$g" --scope "p\\`th\\\\x"');
+  });
+});
+
