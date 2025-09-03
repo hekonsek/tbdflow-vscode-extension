@@ -14,7 +14,15 @@
   "categories": [
     "Other"
   ],
-  "main": "./extension.js",
+  "main": "./out/extension.js",
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "lint:fix": "eslint src --ext ts --fix",
+    "test": "npm run compile && node ./out/test/runTest.js"
+  },
   "activationEvents": [
     "onView:tbdflow.view"
   ],
@@ -43,5 +51,18 @@
         "title": "Open tbdflow Panel"
       }
     ]
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^16.18.0",
+    "@types/vscode": "1.74.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "@vscode/test-electron": "^2.3.9",
+    "eslint": "^8.57.0",
+    "glob": "^10.3.10",
+    "mocha": "^10.7.3",
+    "typescript": "^5.5.0"
   }
 }

@@ -6,8 +6,11 @@ Simple VS Code extension that adds a "tbdflow" button to the Activity Bar (left 
 
 - Prerequisite: Install Visual Studio Code.
 - Open this folder in VS Code.
+- Install dev dependencies and build:
+  - `npm install`
+  - `npm run compile` (or just press `F5`, which runs the watch build)
 - Run the extension:
-  - Press `F5` (or go to `Run and Debug` and start "Run Extension").
+  - Press `F5` (or go to `Run and Debug` and start "Run Extension"). A watch build runs automatically.
   - A new "Extension Development Host" window opens.
 - In the new window, click the `tbdflow` icon in the Activity Bar. You should see a small form with Type, Message, and a Commit button. Submitting runs `echo tbdflow commit --type <type> --message <message>` and displays the command output at the bottom of the panel.
 
@@ -22,6 +25,14 @@ If you want a distributable `.vsix`:
 ## Project Structure
 
 - `package.json`: Extension manifest and contributions (Activity Bar view).
-- `extension.js`: Activation and Webview content provider (renders the Type/Message form and handles Commit clicks).
+- `src/extension.ts`: Activation and Webview content provider (renders the Type/Message form and handles Commit clicks).
 - `media/tbdflow.svg`: Activity Bar icon.
-- `.vscode/launch.json`: Debug configuration to run the extension.
+- `tsconfig.json`: TypeScript configuration; outputs to `out/`.
+- `.vscode/launch.json`: Debug configuration to run + watch-compile the extension.
+
+## Testing & Linting
+
+- Run unit tests:
+  - Using CLI: `npm test` (downloads VS Code test runner and executes Mocha suite)
+  - From VS Code: use the `Extension Tests` launch configuration
+- Lint the code: `npm run lint` (or `npm run lint:fix`)
