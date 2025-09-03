@@ -1,0 +1,43 @@
+{
+  "name": "tbdflow-code-plugin",
+  "displayName": "tbdflow",
+  "description": "Adds a tbdflow Activity Bar view that shows a simple panel.",
+  "version": "0.0.1",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onView:tbdflow.view"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "tbdflow",
+          "title": "tbdflow",
+          "icon": "media/tbdflow.svg"
+        }
+      ]
+    },
+    "views": {
+      "tbdflow": [
+        {
+          "type": "webview",
+          "id": "tbdflow.view",
+          "name": "tbdflow Panel"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "tbdflow.openPanel",
+        "title": "Open tbdflow Panel"
+      }
+    ]
+  }
+}
