@@ -13,8 +13,12 @@ suite('TbdflowCommandBuilder', () => {
   });
 
   test('commit quotes special characters', () => {
-    const cmd = new TbdflowCommandBuilder().commit({ type: 'f"e', message: 'm$g', scope: 'p`th\\x', noVerify: true });
-    assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "f\\"e" --message "m\\$g" --scope "p\\`th\\\\x"');
+    const cmd = new TbdflowCommandBuilder().commit({ type: 'f"e', message: 'm$g', scope: 'p`th\\x', body: 'b"o$d`y', noVerify: true });
+    assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "f\\"e" --message "m\\$g" --scope "p\\`th\\\\x" --body "b\\"o\\$d\\`y"');
+  });
+
+  test('commit with body at the end', () => {
+    const cmd = new TbdflowCommandBuilder().commit({ type: 'feat', message: 'add', body: 'details', noVerify: true });
+    assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "feat" --message "add" --body "details"');
   });
 });
-

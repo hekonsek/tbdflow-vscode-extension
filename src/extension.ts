@@ -21,13 +21,14 @@ export function activate(context: vscode.ExtensionContext) {
           const type = (msg.type || '').trim();
           const scope = (msg.scope || '').trim();
           const message = (msg.message || '').trim();
+          const body = (msg.body || '').trim();
 
           if (!type || !message) {
             vscode.window.showWarningMessage('Please fill both Type and Message.');
             return;
           }
 
-          const cmd = new TbdflowCommandBuilder().commit({ type, message, scope, noVerify: true });
+          const cmd = new TbdflowCommandBuilder().commit({ type, message, scope, body, noVerify: true });
 
           const cwd = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
             ? vscode.workspace.workspaceFolders[0].uri.fsPath
@@ -78,7 +79,7 @@ function getHtml(scriptUri: string): string {
           gap: 8px;
         }
         label { font-size: 12px; opacity: 0.8; }
-        input[type="text"] {
+        input[type="text"], textarea {
           width: 100%;
           padding: 6px 8px;
           border-radius: 4px;
@@ -86,6 +87,7 @@ function getHtml(scriptUri: string): string {
           background: transparent;
           color: inherit;
         }
+        textarea { min-height: 100px; resize: vertical; }
         button {
           align-self: flex-start;
           padding: 6px 12px;
@@ -123,6 +125,10 @@ function getHtml(scriptUri: string): string {
         <div class="row">
           <label for="message">Message</label>
           <input id="message" name="message" type="text" placeholder="Short description" required />
+        </div>
+        <div class="row">
+          <label for="body">Body (optional)</label>
+          <textarea id="body" name="body" placeholder="Longer description (optional)"></textarea>
         </div>
         <button id="commit" type="button">Commit</button>
       </div>

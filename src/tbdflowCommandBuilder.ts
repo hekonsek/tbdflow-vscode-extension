@@ -2,6 +2,7 @@ export type CommitOptions = {
   type: string;
   message: string;
   scope?: string;
+  body?: string;
   noVerify?: boolean;
 };
 
@@ -27,7 +28,10 @@ export class TbdflowCommandBuilder {
       parts.push('--scope', this.quote(opts.scope));
     }
 
+    if (opts.body && opts.body.trim().length > 0) {
+      parts.push('--body', this.quote(opts.body));
+    }
+
     return parts.join(' ');
   }
 }
-

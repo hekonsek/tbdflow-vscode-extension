@@ -5,6 +5,7 @@
   const typeInput = document.getElementById('type');
   const scopeInput = document.getElementById('scope');
   const messageInput = document.getElementById('message');
+  const bodyInput = document.getElementById('body');
   const outputEl = document.getElementById('output');
   const submitBtn = document.getElementById('commit');
 
@@ -19,7 +20,8 @@
       command: 'commit',
       type: typeInput.value,
       scope: scopeInput ? scopeInput.value : '',
-      message: messageInput.value
+      message: messageInput.value,
+      body: bodyInput ? bodyInput.value : ''
     });
   }
 
