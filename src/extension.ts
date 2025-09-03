@@ -18,6 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
       webviewView.webview.onDidReceiveMessage(async (msg: any) => {
         if (msg && msg.command === 'commit') {
           const type = (msg.type || '').trim();
+          const scope = (msg.scope || '').trim();
           const message = (msg.message || '').trim();
 
           if (!type || !message) {
@@ -26,7 +27,10 @@ export function activate(context: vscode.ExtensionContext) {
           }
 
           const q = (s: string) => '"' + String(s).replace(/["\\$`]/g, (r) => '\\' + r) + '"';
-          const cmd = `tbdflow commit --no-verify --type ${q(type)} --message ${q(message)}`;
+          let cmd = `tbdflow commit --no-verify --type ${q(type)} --message ${q(message)}`;
+          if (scope) {
+            cmd += ` --scope ${q(scope)}`;
+          }
 
           const cwd = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
             ? vscode.workspace.workspaceFolders[0].uri.fsPath
@@ -116,6 +120,10 @@ function getHtml(scriptUri: string): string {
           <input id="type" name="type" type="text" placeholder="feat, fix, chore..." required />
         </div>
         <div class="row">
+          <label for="scope">Scope (optional)</label>
+          <input id="scope" name="scope" type="text" placeholder="api, ui, docs... (optional)" />
+        </div>
+        <div class="row">
           <label for="message">Message</label>
           <input id="message" name="message" type="text" placeholder="Short description" required />
         </div>
@@ -141,4 +149,3 @@ function execCmd(command: string, options: cp.ExecOptions = {}): Promise<{ stdou
     });
   });
 }
-

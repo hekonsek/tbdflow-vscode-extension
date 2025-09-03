@@ -3,6 +3,7 @@
   const vscode = acquireVsCodeApi();
 
   const typeInput = document.getElementById('type');
+  const scopeInput = document.getElementById('scope');
   const messageInput = document.getElementById('message');
   const outputEl = document.getElementById('output');
   const submitBtn = document.getElementById('commit');
@@ -17,12 +18,14 @@
     vscode.postMessage({
       command: 'commit',
       type: typeInput.value,
+      scope: scopeInput ? scopeInput.value : '',
       message: messageInput.value
     });
   }
 
   submitBtn.addEventListener('click', () => doCommit());
-  [typeInput, messageInput].forEach((el) => {
+  [typeInput, scopeInput, messageInput].forEach((el) => {
+    if (!el) return;
     el.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -42,4 +45,3 @@
     }
   });
 })();
-
