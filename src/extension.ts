@@ -5,7 +5,7 @@ import { TbdflowCommandBuilder } from './tbdflowCommandBuilder';
 export function activate(context: vscode.ExtensionContext) {
   const provider: vscode.WebviewViewProvider = {
     resolveWebviewView(webviewView: vscode.WebviewView) {
-      webviewView.title = 'tbdflow';
+      webviewView.title = 'tbdflow Commit';
       webviewView.webview.options = {
         enableScripts: true,
       };
