@@ -24,13 +24,15 @@ export function activate(context: vscode.ExtensionContext) {
           const body = (msg.body || '').trim();
           const issue = (msg.issue || '').trim();
           const tag = (msg.tag || '').trim();
+          const breaking = !!msg.breaking;
+          const breakingDescription = (msg.breakingDescription || '').trim();
 
           if (!type || !message) {
             vscode.window.showWarningMessage('Please fill both Type and Message.');
             return;
           }
 
-          const cmd = new TbdflowCommandBuilder().commit({ type, message, scope, body, issue, tag, noVerify: true });
+          const cmd = new TbdflowCommandBuilder().commit({ type, message, scope, body, issue, tag, breaking, breakingDescription, noVerify: true });
 
           const cwd = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
             ? vscode.workspace.workspaceFolders[0].uri.fsPath
@@ -101,6 +103,7 @@ function getHtml(scriptUri: string): string {
         }
         button:hover { background: rgba(127,127,127,0.25); }
         .row { display: flex; flex-direction: column; gap: 4px; }
+        .row.inline { flex-direction: row; align-items: center; gap: 8px; }
         .output {
           margin-top: 12px;
           padding: 8px;
@@ -139,6 +142,14 @@ function getHtml(scriptUri: string): string {
         <div class="row">
           <label for="tag">Tag (optional)</label>
           <input id="tag" name="tag" type="text" placeholder="Tag (optional)" />
+        </div>
+        <div class="row inline">
+          <input id="breaking" name="breaking" type="checkbox" />
+          <label for="breaking">Is this a breaking change?</label>
+        </div>
+        <div class="row">
+          <label for="breaking-description">Breaking Description (optional)</label>
+          <input id="breaking-description" name="breaking-description" type="text" placeholder="Describe the breaking change (optional)" disabled />
         </div>
         <button id="commit" type="button">Commit</button>
       </div>

@@ -8,6 +8,8 @@
   const bodyInput = document.getElementById('body');
   const issueInput = document.getElementById('issue');
   const tagInput = document.getElementById('tag');
+  const breakingInput = document.getElementById('breaking');
+  const breakingDescInput = document.getElementById('breaking-description');
   const outputEl = document.getElementById('output');
   const submitBtn = document.getElementById('commit');
 
@@ -25,12 +27,14 @@
       message: messageInput.value,
       body: bodyInput ? bodyInput.value : '',
       issue: issueInput ? issueInput.value : '',
-      tag: tagInput ? tagInput.value : ''
+      tag: tagInput ? tagInput.value : '',
+      breaking: breakingInput ? !!breakingInput.checked : false,
+      breakingDescription: breakingDescInput ? breakingDescInput.value : ''
     });
   }
 
   submitBtn.addEventListener('click', () => doCommit());
-  [typeInput, scopeInput, messageInput, issueInput, tagInput].forEach((el) => {
+  [typeInput, scopeInput, messageInput, issueInput, tagInput, breakingDescInput].forEach((el) => {
     if (!el) return;
     el.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
@@ -39,6 +43,19 @@
       }
     });
   });
+
+  if (breakingInput && breakingDescInput) {
+    const syncBreakingState = () => {
+      const enabled = !!breakingInput.checked;
+      breakingDescInput.disabled = !enabled;
+      if (!enabled) {
+        breakingDescInput.value = '';
+      }
+    };
+    breakingInput.addEventListener('change', syncBreakingState);
+    // Initialize state on load
+    syncBreakingState();
+  }
 
   window.addEventListener('message', (event) => {
     const data = event.data || {};

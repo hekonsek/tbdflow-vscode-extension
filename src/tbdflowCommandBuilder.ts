@@ -5,6 +5,8 @@ export type CommitOptions = {
   body?: string;
   issue?: string;
   tag?: string;
+  breaking?: boolean;
+  breakingDescription?: string;
   noVerify?: boolean;
 };
 
@@ -40,6 +42,14 @@ export class TbdflowCommandBuilder {
 
     if (opts.tag && opts.tag.trim().length > 0) {
       parts.push('--tag', this.quote(opts.tag));
+    }
+
+    if (opts.breaking) {
+      parts.push('--breaking');
+    }
+
+    if (opts.breakingDescription && opts.breakingDescription.trim().length > 0) {
+      parts.push('--breaking-description', this.quote(opts.breakingDescription));
     }
 
     return parts.join(' ');
