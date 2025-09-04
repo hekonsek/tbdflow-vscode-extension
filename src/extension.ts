@@ -82,6 +82,8 @@ function getHtml(scriptUri: string): string {
           flex-direction: column;
           gap: 8px;
         }
+        /* Add vertical spacing between form rows */
+        #commit-form { display: flex; flex-direction: column; gap: 12px; }
         label { font-size: 12px; opacity: 0.8; }
         input[type="text"], textarea {
           width: 100%;
