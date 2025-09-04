@@ -22,13 +22,15 @@ export function activate(context: vscode.ExtensionContext) {
           const scope = (msg.scope || '').trim();
           const message = (msg.message || '').trim();
           const body = (msg.body || '').trim();
+          const issue = (msg.issue || '').trim();
+          const tag = (msg.tag || '').trim();
 
           if (!type || !message) {
             vscode.window.showWarningMessage('Please fill both Type and Message.');
             return;
           }
 
-          const cmd = new TbdflowCommandBuilder().commit({ type, message, scope, body, noVerify: true });
+          const cmd = new TbdflowCommandBuilder().commit({ type, message, scope, body, issue, tag, noVerify: true });
 
           const cwd = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
             ? vscode.workspace.workspaceFolders[0].uri.fsPath
@@ -129,6 +131,14 @@ function getHtml(scriptUri: string): string {
         <div class="row">
           <label for="body">Body (optional)</label>
           <textarea id="body" name="body" placeholder="Longer description (optional)"></textarea>
+        </div>
+        <div class="row">
+          <label for="issue">Issue (optional)</label>
+          <input id="issue" name="issue" type="text" placeholder="Issue reference (optional)" />
+        </div>
+        <div class="row">
+          <label for="tag">Tag (optional)</label>
+          <input id="tag" name="tag" type="text" placeholder="Tag (optional)" />
         </div>
         <button id="commit" type="button">Commit</button>
       </div>

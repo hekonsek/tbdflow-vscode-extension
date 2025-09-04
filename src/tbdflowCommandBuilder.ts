@@ -3,6 +3,8 @@ export type CommitOptions = {
   message: string;
   scope?: string;
   body?: string;
+  issue?: string;
+  tag?: string;
   noVerify?: boolean;
 };
 
@@ -30,6 +32,14 @@ export class TbdflowCommandBuilder {
 
     if (opts.body && opts.body.trim().length > 0) {
       parts.push('--body', this.quote(opts.body));
+    }
+
+    if (opts.issue && opts.issue.trim().length > 0) {
+      parts.push('--issue', this.quote(opts.issue));
+    }
+
+    if (opts.tag && opts.tag.trim().length > 0) {
+      parts.push('--tag', this.quote(opts.tag));
     }
 
     return parts.join(' ');

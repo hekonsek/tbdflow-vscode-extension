@@ -6,6 +6,8 @@
   const scopeInput = document.getElementById('scope');
   const messageInput = document.getElementById('message');
   const bodyInput = document.getElementById('body');
+  const issueInput = document.getElementById('issue');
+  const tagInput = document.getElementById('tag');
   const outputEl = document.getElementById('output');
   const submitBtn = document.getElementById('commit');
 
@@ -21,12 +23,14 @@
       type: typeInput.value,
       scope: scopeInput ? scopeInput.value : '',
       message: messageInput.value,
-      body: bodyInput ? bodyInput.value : ''
+      body: bodyInput ? bodyInput.value : '',
+      issue: issueInput ? issueInput.value : '',
+      tag: tagInput ? tagInput.value : ''
     });
   }
 
   submitBtn.addEventListener('click', () => doCommit());
-  [typeInput, scopeInput, messageInput].forEach((el) => {
+  [typeInput, scopeInput, messageInput, issueInput, tagInput].forEach((el) => {
     if (!el) return;
     el.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {

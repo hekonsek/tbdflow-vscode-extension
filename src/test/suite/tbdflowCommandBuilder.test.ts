@@ -21,4 +21,14 @@ suite('TbdflowCommandBuilder', () => {
     const cmd = new TbdflowCommandBuilder().commit({ type: 'feat', message: 'add', body: 'details', noVerify: true });
     assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "feat" --message "add" --body "details"');
   });
+
+  test('commit with issue and tag at the end', () => {
+    const cmd = new TbdflowCommandBuilder().commit({ type: 'feat', message: 'add', issue: 'JIRA-123', tag: 'v1.2.3', noVerify: true });
+    assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "feat" --message "add" --issue "JIRA-123" --tag "v1.2.3"');
+  });
+
+  test('commit with all options keeps order', () => {
+    const cmd = new TbdflowCommandBuilder().commit({ type: 'feat', message: 'add', scope: 'api', body: 'details', issue: 'ABC-1', tag: 'rc', noVerify: true });
+    assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "feat" --message "add" --scope "api" --body "details" --issue "ABC-1" --tag "rc"');
+  });
 });
