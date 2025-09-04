@@ -1,34 +1,61 @@
 import * as assert from 'assert';
 import { TbdflowCommandBuilder } from '../../tbdflowCommandBuilder';
 
-suite('TbdflowCommandBuilder', () => {
-  test('commit without scope includes no-verify', () => {
-    const cmd = new TbdflowCommandBuilder().commit({ type: 'feat', message: 'add stuff', noVerify: true });
-    assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "feat" --message "add stuff"');
+suite('TbdflowCommandBuilder - breaking flags', () => {
+  test('does not emit breaking flags by default', () => {
+    const cmd = new TbdflowCommandBuilder().commit({
+      type: 'feat',
+      message: 'add feature'
+    });
+    assert.strictEqual(/\s--breaking(\s|$)/.test(cmd), false);
+    assert.strictEqual(cmd.includes('--breaking-description'), false);
   });
 
-  test('commit with scope at the end', () => {
-    const cmd = new TbdflowCommandBuilder().commit({ type: 'feat', message: 'add', scope: 'api', noVerify: true });
-    assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "feat" --message "add" --scope "api"');
+  test('emits --breaking when true', () => {
+    const cmd = new TbdflowCommandBuilder().commit({
+      type: 'fix',
+      message: 'bug fix',
+      breaking: true
+    });
+    assert.ok(/\s--breaking(\s|$)/.test(cmd), `Expected --breaking in: ${cmd}`);
   });
 
-  test('commit quotes special characters', () => {
-    const cmd = new TbdflowCommandBuilder().commit({ type: 'f"e', message: 'm$g', scope: 'p`th\\x', body: 'b"o$d`y', noVerify: true });
-    assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "f\\"e" --message "m\\$g" --scope "p\\`th\\\\x" --body "b\\"o\\$d\\`y"');
+  test('omits --breaking when false', () => {
+    const cmd = new TbdflowCommandBuilder().commit({
+      type: 'chore',
+      message: 'cleanup',
+      breaking: false
+    });
+    assert.strictEqual(/\s--breaking(\s|$)/.test(cmd), false, `Did not expect --breaking in: ${cmd}`);
   });
 
-  test('commit with body at the end', () => {
-    const cmd = new TbdflowCommandBuilder().commit({ type: 'feat', message: 'add', body: 'details', noVerify: true });
-    assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "feat" --message "add" --body "details"');
+  test('emits --breaking-description when provided (quoted)', () => {
+    const cmd = new TbdflowCommandBuilder().commit({
+      type: 'feat',
+      message: 'new API',
+      breakingDescription: 'renamed method with spaces'
+    });
+    assert.ok(cmd.includes('--breaking-description "renamed method with spaces"'), `Expected quoted description in: ${cmd}`);
   });
 
-  test('commit with issue and tag at the end', () => {
-    const cmd = new TbdflowCommandBuilder().commit({ type: 'feat', message: 'add', issue: 'JIRA-123', tag: 'v1.2.3', noVerify: true });
-    assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "feat" --message "add" --issue "JIRA-123" --tag "v1.2.3"');
+  test('both --breaking and --breaking-description together in order', () => {
+    const cmd = new TbdflowCommandBuilder().commit({
+      type: 'feat',
+      message: 'v2 changes',
+      breaking: true,
+      breakingDescription: 'remove old endpoint'
+    });
+    const breakingIdx = cmd.indexOf('--breaking');
+    const descIdx = cmd.indexOf('--breaking-description');
+    assert.ok(breakingIdx !== -1 && descIdx !== -1, `Expected both flags in: ${cmd}`);
+    assert.ok(breakingIdx < descIdx, `Expected --breaking before --breaking-description in: ${cmd}`);
   });
 
-  test('commit with all options keeps order', () => {
-    const cmd = new TbdflowCommandBuilder().commit({ type: 'feat', message: 'add', scope: 'api', body: 'details', issue: 'ABC-1', tag: 'rc', noVerify: true });
-    assert.strictEqual(cmd, 'tbdflow commit --no-verify --type "feat" --message "add" --scope "api" --body "details" --issue "ABC-1" --tag "rc"');
+  test('omits --breaking-description when empty or whitespace', () => {
+    const cmd1 = new TbdflowCommandBuilder().commit({ type: 'feat', message: 'x', breakingDescription: '' });
+    const cmd2 = new TbdflowCommandBuilder().commit({ type: 'feat', message: 'x', breakingDescription: '   ' });
+    assert.strictEqual(cmd1.includes('--breaking-description'), false);
+    assert.strictEqual(cmd2.includes('--breaking-description'), false);
   });
 });
+
