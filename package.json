@@ -24,7 +24,9 @@
     "test": "npm run compile && node ./out/test/runTest.js"
   },
   "activationEvents": [
-    "onView:tbdflow.view"
+    "onView:tbdflow.view",
+    "onCommand:tbdflow.openPanel",
+    "onCommand:tbdflow.newBranch"
   ],
   "contributes": {
     "viewsContainers": {
@@ -49,6 +51,11 @@
       {
         "command": "tbdflow.openPanel",
         "title": "Open tbdflow Panel"
+      },
+      {
+        "command": "tbdflow.newBranch",
+        "title": "tbdflow: New Branch",
+        "category": "tbdflow"
       }
     ]
   },

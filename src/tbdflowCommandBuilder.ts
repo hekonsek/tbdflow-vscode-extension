@@ -54,4 +54,25 @@ export class TbdflowCommandBuilder {
 
     return parts.join(' ');
   }
+
+  // tbdflow branch --type <TYPE> --name <NAME> [--issue <ISSUE>] [--from-commit <FROM_COMMIT>]
+  branch(opts: { type: string; name: string; issue?: string; fromCommit?: string; }): string {
+    const parts: string[] = [
+      'tbdflow',
+      'branch'
+    ];
+
+    parts.push('--type', this.quote(opts.type));
+    parts.push('--name', this.quote(opts.name));
+
+    if (opts.issue && opts.issue.trim().length > 0) {
+      parts.push('--issue', this.quote(opts.issue));
+    }
+
+    if (opts.fromCommit && opts.fromCommit.trim().length > 0) {
+      parts.push('--from-commit', this.quote(opts.fromCommit));
+    }
+
+    return parts.join(' ');
+  }
 }

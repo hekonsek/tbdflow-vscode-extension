@@ -60,6 +60,70 @@ export function activate(context: vscode.ExtensionContext) {
       await vscode.commands.executeCommand('workbench.view.extension.tbdflow');
     })
   );
+
+  // Command: tbdflow.newBranch — prompts for fields and runs `tbdflow branch`
+  context.subscriptions.push(
+    vscode.commands.registerCommand('tbdflow.newBranch', async () => {
+      const cwd = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
+        ? vscode.workspace.workspaceFolders[0].uri.fsPath
+        : undefined;
+
+      // Collect inputs
+      const type = await vscode.window.showInputBox({
+        title: 'tbdflow: New Branch',
+        placeHolder: 'feat, fix, chore... (type)',
+        prompt: 'Type of branch (see .tbdflow.yml for allowed types)',
+        ignoreFocusOut: true,
+        validateInput: (v) => v.trim().length === 0 ? 'Type is required' : undefined,
+      });
+      if (!type) { return; }
+
+      const name = await vscode.window.showInputBox({
+        title: 'tbdflow: New Branch',
+        placeHolder: 'e.g., user-profile-page',
+        prompt: 'Short, descriptive name for the branch',
+        ignoreFocusOut: true,
+        validateInput: (v) => v.trim().length === 0 ? 'Name is required' : undefined,
+      });
+      if (!name) { return; }
+
+      const issue = await vscode.window.showInputBox({
+        title: 'tbdflow: New Branch',
+        placeHolder: 'e.g., ABC-123 (optional)',
+        prompt: 'Optional issue reference to include in the branch name',
+        ignoreFocusOut: true,
+      });
+
+      const fromCommit = await vscode.window.showInputBox({
+        title: 'tbdflow: New Branch',
+        placeHolder: 'Commit hash on main to branch from (optional)',
+        prompt: "Optional commit hash on 'main' to branch from",
+        ignoreFocusOut: true,
+      });
+
+      const cmd = new TbdflowCommandBuilder().branch({ type: type.trim(), name: name.trim(), issue: (issue || '').trim(), fromCommit: (fromCommit || '').trim() });
+
+      try {
+        const result = await vscode.window.withProgress({
+          location: vscode.ProgressLocation.Notification,
+          title: 'tbdflow: Creating branch...',
+          cancellable: false,
+        }, async () => {
+          return await execCmd(cmd, { cwd });
+        });
+
+        const out = (result.stdout || '').trim();
+        const err = (result.stderr || '').trim();
+        const msg = [out, err].filter(Boolean).join('\n');
+        vscode.window.showInformationMessage(msg.length > 0 ? msg : 'Branch created and pushed.');
+      } catch (e: any) {
+        const stdout = e && e.stdout ? String(e.stdout) : '';
+        const stderr = e && e.stderr ? String(e.stderr) : String(e);
+        const msg = [stdout, stderr].filter(Boolean).join('\n');
+        vscode.window.showErrorMessage(msg.length > 0 ? msg : 'Failed to create branch.');
+      }
+    })
+  );
 }
 
 export function deactivate() {}
