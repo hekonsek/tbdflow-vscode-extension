@@ -2,7 +2,7 @@
   "name": "tbdflow-vscode-extension",
   "displayName": "tbdflow",
   "description": "Adds a tbdflow Activity Bar view that shows a simple panel.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "local",
   "repository": {
     "type": "git",
