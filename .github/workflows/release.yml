@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure Git author
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version (minor) and tag
+        id: bump
+        run: |
+          npm version minor -m "chore(release): v%s"
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "TAG=v$VERSION" >> $GITHUB_ENV
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Push commit and tag
+        run: |
+          git push origin HEAD
+          git push origin "v${VERSION}"
+
+      - name: Build VSIX package
+        run: |
+          npm run compile
+          VSIX_NAME=$(node -p "(p=>p.name+'-'+p.version+'.vsix')(require('./package.json'))")
+          echo "VSIX_NAME=$VSIX_NAME" >> $GITHUB_ENV
+          npx --yes @vscode/vsce package -o "$VSIX_NAME"
+
+      - name: Create GitHub Release and upload VSIX
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          name: ${{ env.TAG }}
+          files: ${{ env.VSIX_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
