@@ -59,3 +59,70 @@ suite('TbdflowCommandBuilder - breaking flags', () => {
   });
 });
 
+suite('TbdflowCommandBuilder - branch', () => {
+  test('builds minimal branch command with type and name', () => {
+    const cmd = new TbdflowCommandBuilder().branch({
+      type: 'feature',
+      name: 'cool-stuff'
+    });
+    assert.strictEqual(cmd, 'tbdflow branch --type "feature" --name "cool-stuff"');
+  });
+
+  test('includes optional --issue when provided (quoted)', () => {
+    const cmd = new TbdflowCommandBuilder().branch({
+      type: 'feat',
+      name: 'api-refactor',
+      issue: 'PROJ-123'
+    });
+    assert.ok(cmd.includes('--issue "PROJ-123"'), `Expected --issue in: ${cmd}`);
+  });
+
+  test('omits --issue when empty or whitespace', () => {
+    const cmd1 = new TbdflowCommandBuilder().branch({ type: 'feat', name: 'x', issue: '' });
+    const cmd2 = new TbdflowCommandBuilder().branch({ type: 'feat', name: 'x', issue: '   ' });
+    assert.strictEqual(cmd1.includes('--issue'), false, `Did not expect --issue in: ${cmd1}`);
+    assert.strictEqual(cmd2.includes('--issue'), false, `Did not expect --issue in: ${cmd2}`);
+  });
+
+  test('includes optional --from-commit when provided (quoted)', () => {
+    const cmd = new TbdflowCommandBuilder().branch({
+      type: 'fix',
+      name: 'hotfix-1',
+      fromCommit: 'deadbeef'
+    });
+    assert.ok(cmd.includes('--from-commit "deadbeef"'), `Expected --from-commit in: ${cmd}`);
+  });
+
+  test('omits --from-commit when empty or whitespace', () => {
+    const cmd1 = new TbdflowCommandBuilder().branch({ type: 'fix', name: 'y', fromCommit: '' });
+    const cmd2 = new TbdflowCommandBuilder().branch({ type: 'fix', name: 'y', fromCommit: '   ' });
+    assert.strictEqual(cmd1.includes('--from-commit'), false, `Did not expect --from-commit in: ${cmd1}`);
+    assert.strictEqual(cmd2.includes('--from-commit'), false, `Did not expect --from-commit in: ${cmd2}`);
+  });
+
+  test('orders flags: --type, --name, --issue, --from-commit', () => {
+    const cmd = new TbdflowCommandBuilder().branch({
+      type: 'feat',
+      name: 'cool',
+      issue: 'ABC-9',
+      fromCommit: '1234567'
+    });
+    const t = cmd.indexOf('--type');
+    const n = cmd.indexOf('--name');
+    const i = cmd.indexOf('--issue');
+    const f = cmd.indexOf('--from-commit');
+    assert.ok(t !== -1 && n !== -1 && i !== -1 && f !== -1, `Expected all flags in: ${cmd}`);
+    assert.ok(t < n && n < i && i < f, `Expected proper flag order in: ${cmd}`);
+  });
+
+  test('escapes quotes, dollar, and backslash in name', () => {
+    const cmd = new TbdflowCommandBuilder().branch({
+      type: 'feat',
+      name: 'say "hi" costs $5 \\ path'
+    });
+    assert.ok(
+      cmd.includes('--name "say \\\"hi\\\" costs \\\$5 \\\\ path"'),
+      `Expected escaped value in: ${cmd}`
+    );
+  });
+});
