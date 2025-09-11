@@ -27,7 +27,8 @@
     "onView:tbdflow.view",
     "onCommand:tbdflow.openPanel",
     "onCommand:tbdflow.newBranch",
-    "onCommand:tbdflow.completeBranch"
+    "onCommand:tbdflow.completeBranch",
+    "onCommand:tbdflow.generateChangelog"
   ],
   "contributes": {
     "viewsContainers": {
@@ -61,6 +62,11 @@
       {
         "command": "tbdflow.completeBranch",
         "title": "tbdflow: Complete Branch",
+        "category": "tbdflow"
+      },
+      {
+        "command": "tbdflow.generateChangelog",
+        "title": "tbdflow: Generate Changelog",
         "category": "tbdflow"
       }
     ]

@@ -85,6 +85,29 @@ suite('TbdflowCommandBuilder - complete', () => {
   });
 });
 
+suite('TbdflowCommandBuilder - changelog', () => {
+  test('builds --unreleased changelog command', () => {
+    const cmd = new TbdflowCommandBuilder().changelog({ unreleased: true });
+    assert.strictEqual(cmd, 'tbdflow changelog --unreleased');
+  });
+
+  test('builds changelog with --from only', () => {
+    const cmd = new TbdflowCommandBuilder().changelog({ from: 'v1.0.0' });
+    assert.strictEqual(cmd, 'tbdflow changelog --from "v1.0.0"');
+  });
+
+  test('builds changelog with --from and --to in order', () => {
+    const cmd = new TbdflowCommandBuilder().changelog({ from: 'v1.0.0', to: 'v2.0.0' });
+    assert.strictEqual(cmd, 'tbdflow changelog --from "v1.0.0" --to "v2.0.0"');
+  });
+
+  test('escapes special characters in refs', () => {
+    const cmd = new TbdflowCommandBuilder().changelog({ from: 'tag"1', to: 'cost $5 \\ back' });
+    assert.ok(cmd.includes('--from "tag\\\"1"'), `Expected escaped from in: ${cmd}`);
+    assert.ok(cmd.includes('--to "cost \\\$5 \\\\ back"'), `Expected escaped to in: ${cmd}`);
+  });
+});
+
 suite('TbdflowCommandBuilder - branch', () => {
   test('builds minimal branch command with type and name', () => {
     const cmd = new TbdflowCommandBuilder().branch({

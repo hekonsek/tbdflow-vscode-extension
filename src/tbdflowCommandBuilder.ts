@@ -88,4 +88,26 @@ export class TbdflowCommandBuilder {
 
     return parts.join(' ');
   }
+
+  // tbdflow changelog [--from <FROM>] [--to <TO>] [--unreleased]
+  changelog(opts: { from?: string; to?: string; unreleased?: boolean; }): string {
+    const parts: string[] = [
+      'tbdflow',
+      'changelog'
+    ];
+
+    if (opts.unreleased) {
+      parts.push('--unreleased');
+    }
+
+    if (opts.from && opts.from.trim().length > 0) {
+      parts.push('--from', this.quote(opts.from));
+    }
+
+    if (opts.to && opts.to.trim().length > 0) {
+      parts.push('--to', this.quote(opts.to));
+    }
+
+    return parts.join(' ');
+  }
 }

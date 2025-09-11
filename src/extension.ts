@@ -173,6 +173,88 @@ export function activate(context: vscode.ExtensionContext) {
       }
     })
   );
+
+  // Command: tbdflow.generateChangelog — prompts for options and runs `tbdflow changelog`
+  context.subscriptions.push(
+    vscode.commands.registerCommand('tbdflow.generateChangelog', async () => {
+      const cwd = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
+        ? vscode.workspace.workspaceFolders[0].uri.fsPath
+        : undefined;
+
+      // Ask if user wants unreleased since last tag
+      const unreleasedChoice = await vscode.window.showQuickPick(['Yes', 'No'], {
+        title: 'tbdflow: Generate Changelog',
+        placeHolder: 'Generate for unreleased (since latest tag)?',
+        ignoreFocusOut: true,
+      });
+      if (!unreleasedChoice) { return; }
+      const unreleased = unreleasedChoice === 'Yes';
+
+      let from = '';
+      let to = '';
+
+      if (!unreleased) {
+        from = (await vscode.window.showInputBox({
+          title: 'tbdflow: Generate Changelog',
+          placeHolder: 'e.g., v1.0.0 or commit hash (optional)',
+          prompt: 'Generate from this git reference (optional)',
+          ignoreFocusOut: true,
+        })) || '';
+
+        to = (await vscode.window.showInputBox({
+          title: 'tbdflow: Generate Changelog',
+          placeHolder: 'Defaults to HEAD (optional)',
+          prompt: 'Generate to this git reference (optional)',
+          ignoreFocusOut: true,
+        })) || '';
+
+        if (from.trim().length === 0 && to.trim().length === 0) {
+          const pick = await vscode.window.showWarningMessage(
+            "Please provide at least 'From' or choose 'Unreleased'.",
+            'Try Again',
+            'Cancel'
+          );
+          if (pick === 'Try Again') {
+            await vscode.commands.executeCommand('tbdflow.generateChangelog');
+          }
+          return;
+        }
+      }
+
+      const cmd = new TbdflowCommandBuilder().changelog({
+        unreleased,
+        from: from.trim(),
+        to: to.trim(),
+      });
+
+      try {
+        const result = await vscode.window.withProgress({
+          location: vscode.ProgressLocation.Notification,
+          title: 'tbdflow: Generating changelog...',
+          cancellable: false,
+        }, async () => {
+          return await execCmd(cmd, { cwd });
+        });
+
+        const out = (result.stdout || '').trim();
+        const err = (result.stderr || '').trim();
+        const content = [out, err].filter(Boolean).join('\n');
+
+        if (content.length === 0) {
+          vscode.window.showInformationMessage('Changelog is empty.');
+          return;
+        }
+
+        const doc = await vscode.workspace.openTextDocument({ language: 'markdown', content });
+        await vscode.window.showTextDocument(doc, { preview: false });
+      } catch (e: any) {
+        const stdout = e && e.stdout ? String(e.stdout) : '';
+        const stderr = e && e.stderr ? String(e.stderr) : String(e);
+        const msg = [stdout, stderr].filter(Boolean).join('\n');
+        vscode.window.showErrorMessage(msg.length > 0 ? msg : 'Failed to generate changelog.');
+      }
+    })
+  );
 }
 
 export function deactivate() {}
