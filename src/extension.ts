@@ -124,6 +124,55 @@ export function activate(context: vscode.ExtensionContext) {
       }
     })
   );
+
+  // Command: tbdflow.completeBranch — prompts for fields and runs `tbdflow complete`
+  context.subscriptions.push(
+    vscode.commands.registerCommand('tbdflow.completeBranch', async () => {
+      const cwd = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
+        ? vscode.workspace.workspaceFolders[0].uri.fsPath
+        : undefined;
+
+      const type = await vscode.window.showInputBox({
+        title: 'tbdflow: Complete Branch',
+        placeHolder: 'feature, release, hotfix... (type)',
+        prompt: 'Type of branch to complete (see .tbdflow.yml for allowed types)',
+        ignoreFocusOut: true,
+        validateInput: (v) => v.trim().length === 0 ? 'Type is required' : undefined,
+      });
+      if (!type) { return; }
+
+      const name = await vscode.window.showInputBox({
+        title: 'tbdflow: Complete Branch',
+        placeHolder: 'e.g., user-profile-page or 1.2.0',
+        prompt: 'Name or version of the branch to complete',
+        ignoreFocusOut: true,
+        validateInput: (v) => v.trim().length === 0 ? 'Name is required' : undefined,
+      });
+      if (!name) { return; }
+
+      const cmd = new TbdflowCommandBuilder().complete({ type: type.trim(), name: name.trim() });
+
+      try {
+        const result = await vscode.window.withProgress({
+          location: vscode.ProgressLocation.Notification,
+          title: 'tbdflow: Completing branch...',
+          cancellable: false,
+        }, async () => {
+          return await execCmd(cmd, { cwd });
+        });
+
+        const out = (result.stdout || '').trim();
+        const err = (result.stderr || '').trim();
+        const msg = [out, err].filter(Boolean).join('\n');
+        vscode.window.showInformationMessage(msg.length > 0 ? msg : 'Branch completed.');
+      } catch (e: any) {
+        const stdout = e && e.stdout ? String(e.stdout) : '';
+        const stderr = e && e.stderr ? String(e.stderr) : String(e);
+        const msg = [stdout, stderr].filter(Boolean).join('\n');
+        vscode.window.showErrorMessage(msg.length > 0 ? msg : 'Failed to complete branch.');
+      }
+    })
+  );
 }
 
 export function deactivate() {}

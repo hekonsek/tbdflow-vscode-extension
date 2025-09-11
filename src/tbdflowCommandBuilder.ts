@@ -75,4 +75,17 @@ export class TbdflowCommandBuilder {
 
     return parts.join(' ');
   }
+
+  // tbdflow complete --type <TYPE> --name <NAME>
+  complete(opts: { type: string; name: string; }): string {
+    const parts: string[] = [
+      'tbdflow',
+      'complete'
+    ];
+
+    parts.push('--type', this.quote(opts.type));
+    parts.push('--name', this.quote(opts.name));
+
+    return parts.join(' ');
+  }
 }

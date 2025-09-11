@@ -26,7 +26,8 @@
   "activationEvents": [
     "onView:tbdflow.view",
     "onCommand:tbdflow.openPanel",
-    "onCommand:tbdflow.newBranch"
+    "onCommand:tbdflow.newBranch",
+    "onCommand:tbdflow.completeBranch"
   ],
   "contributes": {
     "viewsContainers": {
@@ -55,6 +56,11 @@
       {
         "command": "tbdflow.newBranch",
         "title": "tbdflow: New Branch",
+        "category": "tbdflow"
+      },
+      {
+        "command": "tbdflow.completeBranch",
+        "title": "tbdflow: Complete Branch",
         "category": "tbdflow"
       }
     ]

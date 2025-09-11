@@ -59,6 +59,32 @@ suite('TbdflowCommandBuilder - breaking flags', () => {
   });
 });
 
+suite('TbdflowCommandBuilder - complete', () => {
+  test('builds minimal complete command with type and name', () => {
+    const cmd = new TbdflowCommandBuilder().complete({
+      type: 'feature',
+      name: 'user-profile-page'
+    });
+    assert.strictEqual(cmd, 'tbdflow complete --type "feature" --name "user-profile-page"');
+  });
+
+  test('orders flags: --type, --name', () => {
+    const cmd = new TbdflowCommandBuilder().complete({ type: 'release', name: '1.2.0' });
+    const t = cmd.indexOf('--type');
+    const n = cmd.indexOf('--name');
+    assert.ok(t !== -1 && n !== -1, `Expected both flags in: ${cmd}`);
+    assert.ok(t < n, `Expected --type before --name in: ${cmd}`);
+  });
+
+  test('escapes special characters in name', () => {
+    const cmd = new TbdflowCommandBuilder().complete({ type: 'feat', name: 'say "hi" costs $5 \\ path' });
+    assert.ok(
+      cmd.includes('--name "say \\\"hi\\\" costs \\\$5 \\\\ path"'),
+      `Expected escaped value in: ${cmd}`
+    );
+  });
+});
+
 suite('TbdflowCommandBuilder - branch', () => {
   test('builds minimal branch command with type and name', () => {
     const cmd = new TbdflowCommandBuilder().branch({
