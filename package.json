@@ -23,16 +23,17 @@
     "lint:fix": "eslint src --ext ts --fix",
     "test": "npm run compile && node ./out/test/runTest.js"
   },
-  "activationEvents": [
-    "onView:tbdflow.view",
-    "onCommand:tbdflow.openPanel",
-    "onCommand:tbdflow.newBranch",
-    "onCommand:tbdflow.completeBranch",
-    "onCommand:tbdflow.generateChangelog",
-    "onCommand:tbdflow.sync",
-    "onCommand:tbdflow.status",
-    "onCommand:tbdflow.currentBranch"
-  ],
+    "activationEvents": [
+      "onView:tbdflow.view",
+      "onCommand:tbdflow.openPanel",
+      "onCommand:tbdflow.newBranch",
+      "onCommand:tbdflow.completeBranch",
+      "onCommand:tbdflow.generateChangelog",
+      "onCommand:tbdflow.sync",
+      "onCommand:tbdflow.status",
+      "onCommand:tbdflow.currentBranch",
+      "onCommand:tbdflow.checkBranches"
+    ],
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -86,6 +87,11 @@
       {
         "command": "tbdflow.currentBranch",
         "title": "Current Branch",
+        "category": "tbdflow"
+      },
+      {
+        "command": "tbdflow.checkBranches",
+        "title": "Check Stale Branches",
         "category": "tbdflow"
       }
     ]

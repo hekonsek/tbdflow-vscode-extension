@@ -125,4 +125,9 @@ export class TbdflowCommandBuilder {
   currentBranch(): string {
     return ['tbdflow', 'current-branch'].join(' ');
   }
+
+  // tbdflow check-branches
+  checkBranches(): string {
+    return ['tbdflow', 'check-branches'].join(' ');
+  }
 }
