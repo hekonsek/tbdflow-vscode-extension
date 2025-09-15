@@ -2,7 +2,7 @@
   "name": "tbdflow-vscode-extension",
   "displayName": "tbdflow",
   "description": "Adds a tbdflow Activity Bar view that shows a simple panel.",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "publisher": "local",
   "repository": {
     "type": "git",
@@ -23,17 +23,17 @@
     "lint:fix": "eslint src --ext ts --fix",
     "test": "npm run compile && node ./out/test/runTest.js"
   },
-    "activationEvents": [
-      "onView:tbdflow.view",
-      "onCommand:tbdflow.openPanel",
-      "onCommand:tbdflow.newBranch",
-      "onCommand:tbdflow.completeBranch",
-      "onCommand:tbdflow.generateChangelog",
-      "onCommand:tbdflow.sync",
-      "onCommand:tbdflow.status",
-      "onCommand:tbdflow.currentBranch",
-      "onCommand:tbdflow.checkBranches"
-    ],
+  "activationEvents": [
+    "onView:tbdflow.view",
+    "onCommand:tbdflow.openPanel",
+    "onCommand:tbdflow.newBranch",
+    "onCommand:tbdflow.completeBranch",
+    "onCommand:tbdflow.generateChangelog",
+    "onCommand:tbdflow.sync",
+    "onCommand:tbdflow.status",
+    "onCommand:tbdflow.currentBranch",
+    "onCommand:tbdflow.checkBranches"
+  ],
   "contributes": {
     "viewsContainers": {
       "activitybar": [
