@@ -175,3 +175,10 @@ suite('TbdflowCommandBuilder - branch', () => {
     );
   });
 });
+
+suite('TbdflowCommandBuilder - sync', () => {
+  test('builds sync command', () => {
+    const cmd = new TbdflowCommandBuilder().sync();
+    assert.strictEqual(cmd, 'tbdflow sync');
+  });
+});

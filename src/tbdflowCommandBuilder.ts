@@ -110,4 +110,9 @@ export class TbdflowCommandBuilder {
 
     return parts.join(' ');
   }
+
+  // tbdflow sync
+  sync(): string {
+    return ['tbdflow', 'sync'].join(' ');
+  }
 }

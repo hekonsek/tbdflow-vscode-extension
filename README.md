@@ -5,6 +5,7 @@ Simple VS Code extension for [tbdflow](https://github.com/cladam/tbdflow). Main 
 - Commands:
     - `tbdflow: New Branch`
     - `tbdflow: Complete Branch`
+    - `tbdflow: Sync`
     - `tbdflow: Generate Changelog`
 
 ##  Local development

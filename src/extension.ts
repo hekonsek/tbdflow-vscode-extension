@@ -255,6 +255,44 @@ export function activate(context: vscode.ExtensionContext) {
       }
     })
   );
+
+  // Command: tbdflow.sync — runs `tbdflow sync` and shows output
+  context.subscriptions.push(
+    vscode.commands.registerCommand('tbdflow.sync', async () => {
+      const cwd = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
+        ? vscode.workspace.workspaceFolders[0].uri.fsPath
+        : undefined;
+
+      const cmd = new TbdflowCommandBuilder().sync();
+
+      try {
+        const result = await vscode.window.withProgress({
+          location: vscode.ProgressLocation.Notification,
+          title: 'tbdflow: Syncing with remote...',
+          cancellable: false,
+        }, async () => {
+          return await execCmd(cmd, { cwd });
+        });
+
+        const out = (result.stdout || '').trim();
+        const err = (result.stderr || '').trim();
+        const content = [out, err].filter(Boolean).join('\n');
+
+        if (content.length === 0) {
+          vscode.window.showInformationMessage('tbdflow: Sync completed.');
+          return;
+        }
+
+        const doc = await vscode.workspace.openTextDocument({ language: 'plaintext', content });
+        await vscode.window.showTextDocument(doc, { preview: false });
+      } catch (e: any) {
+        const stdout = e && e.stdout ? String(e.stdout) : '';
+        const stderr = e && e.stderr ? String(e.stderr) : String(e);
+        const msg = [stdout, stderr].filter(Boolean).join('\n');
+        vscode.window.showErrorMessage(msg.length > 0 ? msg : 'Failed to sync.');
+      }
+    })
+  );
 }
 
 export function deactivate() {}
