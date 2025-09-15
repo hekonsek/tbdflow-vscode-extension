@@ -115,4 +115,9 @@ export class TbdflowCommandBuilder {
   sync(): string {
     return ['tbdflow', 'sync'].join(' ');
   }
+
+  // tbdflow status
+  status(): string {
+    return ['tbdflow', 'status'].join(' ');
+  }
 }

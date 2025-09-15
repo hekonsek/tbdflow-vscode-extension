@@ -182,3 +182,10 @@ suite('TbdflowCommandBuilder - sync', () => {
     assert.strictEqual(cmd, 'tbdflow sync');
   });
 });
+
+suite('TbdflowCommandBuilder - status', () => {
+  test('builds status command', () => {
+    const cmd = new TbdflowCommandBuilder().status();
+    assert.strictEqual(cmd, 'tbdflow status');
+  });
+});

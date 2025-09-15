@@ -29,7 +29,8 @@
     "onCommand:tbdflow.newBranch",
     "onCommand:tbdflow.completeBranch",
     "onCommand:tbdflow.generateChangelog",
-    "onCommand:tbdflow.sync"
+    "onCommand:tbdflow.sync",
+    "onCommand:tbdflow.status"
   ],
   "contributes": {
     "viewsContainers": {
@@ -73,6 +74,11 @@
       {
         "command": "tbdflow.sync",
         "title": "tbdflow: Sync",
+        "category": "tbdflow"
+      },
+      {
+        "command": "tbdflow.status",
+        "title": "tbdflow: Status",
         "category": "tbdflow"
       }
     ]
