@@ -1,8 +1,13 @@
 import * as vscode from 'vscode';
 import * as cp from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 import { TbdflowCommandBuilder } from './tbdflowCommandBuilder';
 
 export function activate(context: vscode.ExtensionContext) {
+  // Initialize Git-awareness context keys
+  void initializeGitAwareness(context);
+
   const provider: vscode.WebviewViewProvider = {
     resolveWebviewView(webviewView: vscode.WebviewView) {
       webviewView.title = 'tbdflow Commit';
@@ -395,6 +400,95 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {}
+
+async function initializeGitAwareness(context: vscode.ExtensionContext) {
+  // Determine whether awareness is enabled (disabled in dev/F5)
+  const computeAwarenessEnabled = (): boolean => {
+    const cfg = vscode.workspace.getConfiguration('tbdflow');
+    const enabled = cfg.get<boolean>('gitProjectAwareness.enabled', true);
+    return context.extensionMode === vscode.ExtensionMode.Development ? false : enabled;
+  };
+
+  const setCtx = (key: string, val: any) => vscode.commands.executeCommand('setContext', key, val);
+
+  const updateAwarenessEnabled = async () => {
+    const enabled = computeAwarenessEnabled();
+    await setCtx('tbdflow.gitAwarenessEnabled', enabled);
+  };
+
+  const isGitRepo = async (): Promise<boolean> => {
+    // If no workspace, not a repo
+    const folders = vscode.workspace.workspaceFolders;
+    if (!folders || folders.length === 0) return false;
+
+    // Prefer Git extension API if available
+    try {
+      const gitExt = vscode.extensions.getExtension<any>('vscode.git');
+      if (gitExt) {
+        const api = gitExt.isActive ? gitExt.exports.getAPI?.(1) : (await gitExt.activate())?.getAPI?.(1);
+        if (api && Array.isArray(api.repositories)) {
+          return api.repositories.length > 0;
+        }
+      }
+    } catch {
+      // fall back
+    }
+
+    // Fallback: check for .git directory in any workspace root
+    for (const folder of folders) {
+      try {
+        const p = path.join(folder.uri.fsPath, '.git');
+        const stat = fs.statSync(p);
+        if (stat && stat.isDirectory()) return true;
+      } catch {
+        // ignore
+      }
+    }
+    return false;
+  };
+
+  const updateIsGitRepo = async () => {
+    // If awareness is disabled, the visibility condition will be true regardless,
+    // but we still keep this key accurate in case other features rely on it.
+    const val = await isGitRepo();
+    await setCtx('tbdflow.isGitRepo', val);
+  };
+
+  // Initial setup
+  await updateAwarenessEnabled();
+  await updateIsGitRepo();
+
+  // React to config changes
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration(async (e) => {
+      if (e.affectsConfiguration('tbdflow.gitProjectAwareness.enabled')) {
+        await updateAwarenessEnabled();
+      }
+    })
+  );
+
+  // React to workspace folder changes
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeWorkspaceFolders(async () => {
+      await updateIsGitRepo();
+    })
+  );
+
+  // React to Git repository open/close via Git API if present
+  try {
+    const gitExt = vscode.extensions.getExtension<any>('vscode.git');
+    if (gitExt) {
+      const api = gitExt.isActive ? gitExt.exports.getAPI?.(1) : (await gitExt.activate())?.getAPI?.(1);
+      if (api) {
+        if (api.onDidOpenRepository) context.subscriptions.push(api.onDidOpenRepository(updateIsGitRepo));
+        if (api.onDidCloseRepository) context.subscriptions.push(api.onDidCloseRepository(updateIsGitRepo));
+        if (api.onDidChangeState) context.subscriptions.push(api.onDidChangeState(updateIsGitRepo));
+      }
+    }
+  } catch {
+    // ignore — fallback detection already handled
+  }
+}
 
 function getHtml(scriptUri: string): string {
   return `<!DOCTYPE html>

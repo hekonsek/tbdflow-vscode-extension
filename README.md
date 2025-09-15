@@ -11,6 +11,14 @@ Simple VS Code extension for [tbdflow](https://github.com/cladam/tbdflow). Main 
     - `tbdflow: Current Branch`
     - `tbdflow: Check Stale Branches`
 
+## Git‑project awareness
+
+The extension can hide its commands and the commit view unless the current workspace is a Git repository.
+
+- Setting: `tbdflow.gitProjectAwareness.enabled` (default: `true`)
+- When disabled, all commands and the view are always visible.
+- While debugging the extension (Run Extension / F5), this awareness is automatically disabled so you can always see the commands.
+
 ##  Local development
 
 You can start local development of this extension by cloning this project and opening Code in it:

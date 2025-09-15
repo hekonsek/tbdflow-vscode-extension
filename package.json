@@ -24,6 +24,7 @@
     "test": "npm run compile && node ./out/test/runTest.js"
   },
   "activationEvents": [
+      "onStartupFinished",
     "onView:tbdflow.view",
     "onCommand:tbdflow.openPanel",
     "onCommand:tbdflow.newBranch",
@@ -35,12 +36,23 @@
     "onCommand:tbdflow.checkBranches"
   ],
   "contributes": {
+    "configuration": {
+      "title": "tbdflow",
+      "properties": {
+        "tbdflow.gitProjectAwareness.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Hide tbdflow commands and views when the current workspace is not a Git repository. Automatically disabled while debugging the extension (F5)."
+        }
+      }
+    },
     "viewsContainers": {
       "activitybar": [
         {
           "id": "tbdflow",
           "title": "tbdflow Commit",
-          "icon": "media/tbdflow.svg"
+          "icon": "media/tbdflow.svg",
+          "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled"
         }
       ]
     },
@@ -49,7 +61,8 @@
         {
           "type": "webview",
           "id": "tbdflow.view",
-          "name": "tbdflow Panel"
+          "name": "tbdflow Panel",
+          "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled"
         }
       ]
     },
@@ -95,6 +108,19 @@
         "category": "tbdflow"
       }
     ]
+    ,
+    "menus": {
+      "commandPalette": [
+        { "command": "tbdflow.openPanel", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" },
+        { "command": "tbdflow.newBranch", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" },
+        { "command": "tbdflow.completeBranch", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" },
+        { "command": "tbdflow.generateChangelog", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" },
+        { "command": "tbdflow.sync", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" },
+        { "command": "tbdflow.status", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" },
+        { "command": "tbdflow.currentBranch", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" },
+        { "command": "tbdflow.checkBranches", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" }
+      ]
+    }
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
