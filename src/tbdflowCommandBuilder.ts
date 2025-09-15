@@ -120,4 +120,9 @@ export class TbdflowCommandBuilder {
   status(): string {
     return ['tbdflow', 'status'].join(' ');
   }
+
+  // tbdflow current-branch
+  currentBranch(): string {
+    return ['tbdflow', 'current-branch'].join(' ');
+  }
 }

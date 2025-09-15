@@ -8,6 +8,7 @@ Simple VS Code extension for [tbdflow](https://github.com/cladam/tbdflow). Main 
     - `tbdflow: Sync`
     - `tbdflow: Generate Changelog`
     - `tbdflow: Status`
+    - `tbdflow: Current Branch`
 
 ##  Local development
 

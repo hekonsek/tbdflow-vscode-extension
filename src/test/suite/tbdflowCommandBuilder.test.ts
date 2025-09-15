@@ -189,3 +189,10 @@ suite('TbdflowCommandBuilder - status', () => {
     assert.strictEqual(cmd, 'tbdflow status');
   });
 });
+
+suite('TbdflowCommandBuilder - current-branch', () => {
+  test('builds current-branch command', () => {
+    const cmd = new TbdflowCommandBuilder().currentBranch();
+    assert.strictEqual(cmd, 'tbdflow current-branch');
+  });
+});

@@ -326,6 +326,39 @@ export function activate(context: vscode.ExtensionContext) {
       }
     })
   );
+
+  // Command: tbdflow.currentBranch — runs `tbdflow current-branch` and shows output
+  context.subscriptions.push(
+    vscode.commands.registerCommand('tbdflow.currentBranch', async () => {
+      const cwd = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
+        ? vscode.workspace.workspaceFolders[0].uri.fsPath
+        : undefined;
+
+      const cmd = new TbdflowCommandBuilder().currentBranch();
+
+      try {
+        const result = await vscode.window.withProgress({
+          location: vscode.ProgressLocation.Notification,
+          title: 'tbdflow: Checking current branch...',
+          cancellable: false,
+        }, async () => {
+          return await execCmd(cmd, { cwd });
+        });
+
+        const out = (result.stdout || '').trim();
+        const err = (result.stderr || '').trim();
+        const content = [out, err].filter(Boolean).join('\n');
+
+        const doc = await vscode.workspace.openTextDocument({ language: 'plaintext', content });
+        await vscode.window.showTextDocument(doc, { preview: false });
+      } catch (e: any) {
+        const stdout = e && e.stdout ? String(e.stdout) : '';
+        const stderr = e && e.stderr ? String(e.stderr) : String(e);
+        const msg = [stdout, stderr].filter(Boolean).join('\n');
+        vscode.window.showErrorMessage(msg.length > 0 ? msg : 'Failed to get current branch.');
+      }
+    })
+  );
 }
 
 export function deactivate() {}
