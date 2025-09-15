@@ -54,31 +54,32 @@
     "commands": [
       {
         "command": "tbdflow.openPanel",
-        "title": "Open tbdflow Panel"
+        "title": "Open Panel",
+        "category": "tbdflow"
       },
       {
         "command": "tbdflow.newBranch",
-        "title": "tbdflow: New Branch",
+        "title": "New Branch",
         "category": "tbdflow"
       },
       {
         "command": "tbdflow.completeBranch",
-        "title": "tbdflow: Complete Branch",
+        "title": "Complete Branch",
         "category": "tbdflow"
       },
       {
         "command": "tbdflow.generateChangelog",
-        "title": "tbdflow: Generate Changelog",
+        "title": "Generate Changelog",
         "category": "tbdflow"
       },
       {
         "command": "tbdflow.sync",
-        "title": "tbdflow: Sync",
+        "title": "Sync",
         "category": "tbdflow"
       },
       {
         "command": "tbdflow.status",
-        "title": "tbdflow: Status",
+        "title": "Status",
         "category": "tbdflow"
       }
     ]
