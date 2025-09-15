@@ -2,7 +2,7 @@
   "name": "tbdflow-vscode-extension",
   "displayName": "tbdflow",
   "description": "Adds a tbdflow Activity Bar view that shows a simple panel.",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "publisher": "local",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
     "test": "npm run compile && node ./out/test/runTest.js"
   },
   "activationEvents": [
-      "onStartupFinished",
+    "onStartupFinished",
     "onView:tbdflow.view",
     "onCommand:tbdflow.openPanel",
     "onCommand:tbdflow.newBranch",
@@ -107,18 +107,41 @@
         "title": "Check Stale Branches",
         "category": "tbdflow"
       }
-    ]
-    ,
+    ],
     "menus": {
       "commandPalette": [
-        { "command": "tbdflow.openPanel", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" },
-        { "command": "tbdflow.newBranch", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" },
-        { "command": "tbdflow.completeBranch", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" },
-        { "command": "tbdflow.generateChangelog", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" },
-        { "command": "tbdflow.sync", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" },
-        { "command": "tbdflow.status", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" },
-        { "command": "tbdflow.currentBranch", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" },
-        { "command": "tbdflow.checkBranches", "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled" }
+        {
+          "command": "tbdflow.openPanel",
+          "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled"
+        },
+        {
+          "command": "tbdflow.newBranch",
+          "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled"
+        },
+        {
+          "command": "tbdflow.completeBranch",
+          "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled"
+        },
+        {
+          "command": "tbdflow.generateChangelog",
+          "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled"
+        },
+        {
+          "command": "tbdflow.sync",
+          "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled"
+        },
+        {
+          "command": "tbdflow.status",
+          "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled"
+        },
+        {
+          "command": "tbdflow.currentBranch",
+          "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled"
+        },
+        {
+          "command": "tbdflow.checkBranches",
+          "when": "tbdflow.isGitRepo || !tbdflow.gitAwarenessEnabled"
+        }
       ]
     }
   },
