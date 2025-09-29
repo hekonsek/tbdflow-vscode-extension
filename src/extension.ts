@@ -21,6 +21,30 @@ export function activate(context: vscode.ExtensionContext) {
 
       webviewView.webview.html = getHtml(String(scriptUri));
 
+      const refreshDodChecklist = async () => {
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        const cwd = workspaceFolders && workspaceFolders.length > 0
+          ? workspaceFolders[0].uri.fsPath
+          : undefined;
+
+        if (!cwd) {
+          await webviewView.webview.postMessage({ command: 'dodItems', items: [] });
+          return;
+        }
+
+        try {
+          const { stdout } = await execCmd('tbdflow config --get-dod', { cwd });
+          const items = stdout
+            .split(/\r?\n/)
+            .map((line) => line.trim())
+            .filter((line) => line.length > 0);
+          await webviewView.webview.postMessage({ command: 'dodItems', items });
+        } catch (error) {
+          console.warn('tbdflow: failed to load DoD checklist', error);
+          await webviewView.webview.postMessage({ command: 'dodItems', items: [] });
+        }
+      };
+
       webviewView.webview.onDidReceiveMessage(async (msg: any) => {
         if (msg && msg.command === 'commit') {
           const type = (msg.type || '').trim();
@@ -53,6 +77,8 @@ export function activate(context: vscode.ExtensionContext) {
           }
         }
       });
+
+      void refreshDodChecklist();
     }
   };
 
@@ -532,6 +558,35 @@ function getHtml(scriptUri: string): string {
         button:hover { background: rgba(127,127,127,0.25); }
         .row { display: flex; flex-direction: column; gap: 4px; }
         .row.inline { flex-direction: row; align-items: center; gap: 8px; }
+        #dod-anchor { display: contents; }
+        #dod-section {
+          padding: 8px;
+          border-radius: 4px;
+          border: 1px solid rgba(127,127,127,0.4);
+          gap: 8px;
+        }
+        .dod-title {
+          font-size: 12px;
+          font-weight: 600;
+          opacity: 0.9;
+        }
+        .dod-list {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .dod-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+        }
+        .dod-item label {
+          flex: 1;
+        }
+        .hint {
+          font-size: 11px;
+          opacity: 0.7;
+        }
         .output {
           margin-top: 12px;
           padding: 8px;
@@ -579,6 +634,7 @@ function getHtml(scriptUri: string): string {
           <label for="breaking-description">Breaking Description (optional)</label>
           <input id="breaking-description" name="breaking-description" type="text" placeholder="Describe the breaking change (optional)" disabled />
         </div>
+        <div id="dod-anchor"></div>
         <button id="commit" type="button">Commit</button>
       </div>
       <div id="output" class="output" aria-live="polite"></div>
